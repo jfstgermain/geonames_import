@@ -11,8 +11,20 @@ db.open (err, db) ->
   db.collection "states_dump", (err, collection) ->
     reader = csv.createCsvFileReader "./data/admin1CodesASCII.csv", {separator: "\t"}
     reader.addListener "data", (data) ->
-      [state_code, state_name1, state_name2, id] = data
+      [state_code, state_name1, state_name2, geonameid] = data      
+      [state_code_prefix, state_code_suffix] = state_code.split(".")
       
+      if state_code_prefix in interesting_country_codes
+        doc = 
+          geonameid: geonameid
+          state_code: state_code
+          state_name1: state_name1
+          state_name2: state_name2
+      
+      collection.insert doc, (doc) ->
+          counter = counter + 1
+          console.log "#{counter}" if counter % 1000 == 0
+          
       # if state_code 
   # Import cities with population > 1000
   db.collection "countries_dump", (err, collection) ->
