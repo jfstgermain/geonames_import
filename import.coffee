@@ -24,8 +24,8 @@ db.open (err, db) ->
               state_name2: state_name2
           
           collection.insert doc, (doc) ->
-              counter = counter + 1
-              console.log "#{counter}" if counter % 1000 == 0
+            counter = counter + 1
+            console.log "#{counter}" if counter % 1000 == 0
             
         #reader.addListener "end", ->
     
