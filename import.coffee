@@ -32,6 +32,7 @@ db.open (err, db) ->
           
       # if state_code 
   # Import cities with population > 1000
+  # Need to include districts also not just cities
   db.collection "countries_dump", (err, collection) ->
     reader = csv.createCsvFileReader "./data/cities.csv", {separator: "\t"}
     reader.addListener "data", (data) ->
