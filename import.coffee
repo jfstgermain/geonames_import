@@ -1,6 +1,6 @@
 csv = require "ya-csv"
 mongodb = require "mongodb"
-db = new mongodb.Db("meatme", new mongodb.Server "127.0.0.1", 27017, {})
+db = new mongodb.Db("geonames", new mongodb.Server "127.0.0.1", 27017, {})
 interesting_feature_codes = ["PPL", "PPLA", "PPLC", "PPLG", "PPLL", "PPLR", "PPLS", "STLMT", "PPLQ", "PPLW"]
 interesting_country_codes = ["CA", "US", "FR"]
 counter = 0
