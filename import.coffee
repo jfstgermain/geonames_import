@@ -6,7 +6,7 @@ interesting_feature_codes = ["PPL", "PPLA", "PPLC", "PPLG", "PPLL", "PPLR", "PPL
 counter = 0
 
 db.open (err, db) ->
-  db.collection "test", (err, collection) ->
+  db.collection "countries_dump", (err, collection) ->
     reader = csv.createCsvFileReader "./data/CA.csv", {separator: "\t"}
     reader.addListener "data", (data) ->
       [geonameid, name, asciiname, alternatenames, latitude, longitude, feature_class, feature_code, country_code, cc2, admin1_code, admin2_code, admin3_code, admin4_code, population, elevation, gtopo30, timezone, modification_date] = data
