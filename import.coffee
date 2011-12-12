@@ -66,4 +66,4 @@ db.open (err, db) ->
           
         collection.insert doc, (doc) ->
           counter = counter + 1
-          console.log "#{counter}" if counter % 100000 == 0
+          console.log "#{counter}" if counter % 1000 == 0
