@@ -1,6 +1,7 @@
 csv = require "ya-csv"
 mongodb = require "mongodb"
 db = new mongodb.Db("geonames", new mongodb.Server "127.0.0.1", 27017, {})
+# include only cities, boroughs & districts
 interesting_feature_codes = ["PPL", "PPLA", "PPLC", "PPLG", "PPLL", "PPLR", "PPLS", "STLMT", "PPLQ", "PPLW"]
 interesting_country_codes = ["CA", "US", "FR"]
 counter = 0
@@ -24,7 +25,7 @@ db.open (err, db) ->
               state_name2: state_name2
           
           collection.insert doc, (doc) ->
-            counter = counter + 1
+            counter += 1
             console.log "#{counter}" if counter % 1000 == 0
             
         #reader.addListener "end", ->
@@ -69,5 +70,5 @@ db.open (err, db) ->
           timezone: timezone
           
         collection.insert doc, (doc) ->
-          counter = counter + 1
+          counter += 1
           console.log "#{counter}" if counter % 1000 == 0
