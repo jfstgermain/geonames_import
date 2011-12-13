@@ -52,6 +52,7 @@ db.open (err, db) ->
                     admin1_code_dbref = null
                     if not err? and admin1_code_doc?
                       admin1_code_dbref = new client.bson_serializer.DBRef "states_dump", admin1_code_doc._id, "geonames"
+                    else console.log "Couldn't find #{admin1_code} in  states_dump"
                       
                     doc = 
                       geonameid: geonameid
