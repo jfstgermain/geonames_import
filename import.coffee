@@ -2,7 +2,7 @@ csv = require "ya-csv"
 mongodb = require "mongodb"
 db = new mongodb.Db("geonames", new mongodb.Server "127.0.0.1", 27017, {})
 # include only cities, boroughs & districts
-interesting_feature_codes = ["PPL", "PPLA", "PPLC", "PPLL", "PPLS"]
+interesting_feature_codes = ["PPL", "PPLA", "PPLA2", "PPLC", "PPLL", "PPLS", "ADMD", "ZN"]
 interesting_country_codes = ["CA", "US", "FR"]
 
 db.open (err, db) ->

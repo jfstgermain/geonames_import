@@ -9,7 +9,7 @@
   csv = require("ya-csv");
   mongodb = require("mongodb");
   db = new mongodb.Db("geonames", new mongodb.Server("127.0.0.1", 27017, {}));
-  interesting_feature_codes = ["PPL", "PPLA", "PPLC", "PPLL", "PPLS"];
+  interesting_feature_codes = ["PPL", "PPLA", "PPLA2", "PPLC", "PPLL", "PPLS", "ADMD", "ZN"];
   interesting_country_codes = ["CA", "US", "FR"];
   db.open(function(err, db) {
     return db.collection("states_dump", function(err, states_dump) {
@@ -64,7 +64,6 @@
                       admin1_code_dbref = null;
                       counter = 0;
                       if (!(err != null) && (admin1_code_doc != null)) {
-                        console.dir(admin1_code_doc);
                         admin1_code_dbref = new db.bson_serializer.DBRef("states_dump", admin1_code_doc._id, "geonames");
                       } else {
                         console.log("Couldn't find " + admin1_code_full + " in states_dump");
