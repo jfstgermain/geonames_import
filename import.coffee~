@@ -1,8 +1,0 @@
-csv = require "../lib/csv"
-mongodb = require "mongodb"
-db = new mongodb.Db("meatme", new mongodb.Server "127.0.0.1", 27017, {})
-
-db.open (err, db) ->
-  db.collection "test", (err, collection) ->
-    csv.each("../data/CA.csv").addListener "data", (data) ->
-      [geonameid, name, asciiname, alternatenames, latitude, longitude, feature_class, feature_code, country_code, cc2, admin1_code, admin2_code, admin3_code, admin4_code, population, elevation, gtopo30, timezone, modification_date] = line.split("\t")
