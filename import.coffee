@@ -26,16 +26,13 @@ db.open (err, db) ->
           geonameid: geonameid
           name1: state_name1
           name2: state_name2
-          state_code: state_code 
+          state_code: state_code
         
-        counter++
+        counter++ # Keep track of spawn inserts 
         states.insert doc, (doc2) ->
           counter--
-          # If [ 
-          if finished_processing_cvs and counter is 0        
-            # if state_code 
-            # Import cities with population > 1000
-            # Need to include districts also not just citie
+          # If [ the file was completely read AND all inserts completed ] Then [ proceed with the regions inserts ]
+          if finished_processing_cvs and counter is 0
             db.collection "regions", (err1, regions) ->
               regions.ensureIndex {geoloc: "2d"}, (err, indexName) ->
                 reader = csv.createCsvFileReader "./data/CA.csv", {separator: "\t"}
@@ -43,6 +40,7 @@ db.open (err, db) ->
                   [geonameid, name, asciiname, alternatenames, latitude, longitude, feature_class, feature_code, country_code, cc2, admin1_code, admin2_code, admin3_code, admin4_code, population, elevation, gtopo30, timezone, modification_date] = data
             
                   #if feature_code in interesting_feature_codes and "(historical)" not in name
+                  # If [ Feature code is a city, district, borough... ] Then [ action ]
                   if feature_code in interesting_feature_codes and "(historical)" not in name
                     # add the statename to the keywords array field
                     ###
