@@ -35,8 +35,14 @@ db.open (err, db) ->
           if finished_processing_cvs and counter is 0
             db.collection "regions", (err1, regions) ->
               regions.ensureIndex {geoloc: "2d"}, (err, indexName) ->
+                finished_processing_cvs = false
                 reader = csv.createCsvFileReader "./data/CA.csv", {separator: "\t"}
+                
+                reader.addListener "end", ->
+                  finished_processing_cvs = true
+
                 reader.addListener "data", (data) ->
+                  counter = 0
                   [geonameid, name, asciiname, alternatenames, latitude, longitude, feature_class, feature_code, country_code, cc2, admin1_code, admin2_code, admin3_code, admin4_code, population, elevation, gtopo30, timezone, modification_date] = data
             
                   #if feature_code in interesting_feature_codes and "(historical)" not in name
@@ -55,7 +61,6 @@ db.open (err, db) ->
                     states.find {state_code: admin1_code_full}, (err2, cursor) ->
                       cursor.nextObject (err3, admin1_code_doc) ->
                         admin1_code_dbref = null
-                        counter = 0
       
                         if not err? and admin1_code_doc?
                           admin1_code_dbref = new db.bson_serializer.DBRef "states", admin1_code_doc._id, "meatme"
@@ -74,11 +79,10 @@ db.open (err, db) ->
                           geoloc:
                             lat: (Number) latitude
                             lon: (Number) longitude
-                          
+                        
+                        counter++
                         regions.insert doc, (doc) ->
-                          counter++
-                          console.log "#{counter}" if counter % 1000 == 0
-      
-                reader.addListener "end", ->
-                  console.log "Finished importing records"
+                          counter--
+                          if finished_processing_cvs and counter is 0
+                            console.log "Finished importing data..."
       
