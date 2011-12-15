@@ -8,39 +8,41 @@
   };
   csv = require("ya-csv");
   mongodb = require("mongodb");
-  db = new mongodb.Db("geonames", new mongodb.Server("127.0.0.1", 27017, {}));
+  db = new mongodb.Db("meatme", new mongodb.Server("127.0.0.1", 27017, {}));
   interesting_feature_codes = ["PPL", "PPLA", "PPLA2", "PPLC", "PPLL", "PPLS", "ADMD", "ZN"];
   interesting_country_codes = ["CA", "US", "FR"];
   db.open(function(err, db) {
-    return db.collection("states_dump", function(err, states_dump) {
-      return states_dump.createIndex([['state_code', 1]], function(indexErr, indexName) {
-        var counter, reader;
-        if (!(indexErr != null)) {
-          counter = 0;
-          reader = csv.createCsvFileReader("./data/admin1CodesASCII.csv", {
-            separator: "\t"
-          });
-          reader.addListener("data", function(data) {
-            var doc, geonameid, state_code, state_code_prefix, state_code_suffix, state_name1, state_name2, _ref;
-            state_code = data[0], state_name1 = data[1], state_name2 = data[2], geonameid = data[3];
-            _ref = state_code.split("."), state_code_prefix = _ref[0], state_code_suffix = _ref[1];
-            if (__indexOf.call(interesting_country_codes, state_code_prefix) >= 0) {
-              doc = {
-                geonameid: geonameid,
-                state_code: state_code,
-                state_name1: state_name1,
-                state_name2: state_name2
-              };
-              return states_dump.insert(doc, function(doc2) {
-                counter++;
-                if (counter % 1000 === 0) {
-                  return console.log("" + counter);
-                }
-              });
-            }
-          });
-          return reader.addListener("end", function() {
-            return db.collection("countries_dump", function(err1, countries_dump) {
+    return db.collection("states", function(err, states) {
+      var counter, reader;
+      if (!(typeof indexErr !== "undefined" && indexErr !== null)) {
+        counter = 0;
+        reader = csv.createCsvFileReader("./data/admin1CodesASCII.csv", {
+          separator: "\t"
+        });
+        reader.addListener("data", function(data) {
+          var doc, geonameid, state_code, state_code_prefix, state_code_suffix, state_name1, state_name2, _ref;
+          state_code = data[0], state_name1 = data[1], state_name2 = data[2], geonameid = data[3];
+          _ref = state_code.split("."), state_code_prefix = _ref[0], state_code_suffix = _ref[1];
+          if (__indexOf.call(interesting_country_codes, state_code_prefix) >= 0) {
+            doc = {
+              geonameid: geonameid,
+              name1: state_name1,
+              name2: state_name2,
+              state_code: state_code
+            };
+            return states.insert(doc, function(doc2) {
+              counter++;
+              if (counter % 1000 === 0) {
+                return console.log("" + counter);
+              }
+            });
+          }
+        });
+        return reader.addListener("end", function() {
+          return db.collection("regions", function(err1, regions) {
+            return regions.ensureIndex({
+              geoloc: "2d"
+            }, function(err, indexName) {
               reader = csv.createCsvFileReader("./data/CA.csv", {
                 separator: "\t"
               });
@@ -56,7 +58,7 @@
                                   keywords = keywords.flatten.uniq.sort
                                   */
                   admin1_code_full = "" + country_code + "." + admin1_code;
-                  return states_dump.find({
+                  return states.find({
                     state_code: admin1_code_full
                   }, function(err2, cursor) {
                     return cursor.nextObject(function(err3, admin1_code_doc) {
@@ -64,32 +66,26 @@
                       admin1_code_dbref = null;
                       counter = 0;
                       if (!(err != null) && (admin1_code_doc != null)) {
-                        admin1_code_dbref = new db.bson_serializer.DBRef("states_dump", admin1_code_doc._id, "geonames");
+                        admin1_code_dbref = new db.bson_serializer.DBRef("states", admin1_code_doc._id, "meatme");
                       } else {
-                        console.log("Couldn't find " + admin1_code_full + " in states_dump");
+                        console.log("Couldn't find " + admin1_code_full + " in States");
                       }
                       doc = {
                         geonameid: geonameid,
                         name: name,
-                        loc: {
-                          lat: Number(latitude),
-                          lng: Number(longitude)
-                        },
+                        country_code: country_code,
                         feature_class: feature_class,
                         feature_code: feature_code,
-                        country_code: country_code,
-                        cc2: cc2,
                         admin1_code: admin1_code,
-                        admin1_code_dbref: admin1_code_dbref,
                         admin2_code: admin2_code,
-                        admin3_code: admin3_code,
-                        admin4_code: admin4_code,
-                        population: population,
-                        elevation: elevation,
-                        gtopo30: gtopo30,
-                        timezone: timezone
+                        timezone: timezone,
+                        state: admin1_code_dbref,
+                        geoloc: {
+                          lat: Number(latitude),
+                          lon: Number(longitude)
+                        }
                       };
-                      return countries_dump.insert(doc, function(doc) {
+                      return regions.insert(doc, function(doc) {
                         counter++;
                         if (counter % 1000 === 0) {
                           return console.log("" + counter);
@@ -104,8 +100,8 @@
               });
             });
           });
-        }
-      });
+        });
+      }
     });
   });
 }).call(this);
