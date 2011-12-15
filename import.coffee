@@ -4,7 +4,8 @@ mongodb = require "mongodb"
 db = new mongodb.Db("meatme", new mongodb.Server "127.0.0.1", 27017, {})
 # include only cities, boroughs & districts
 interesting_feature_codes = ["PPL", "PPLA", "PPLA2", "PPLC", "PPLL", "PPLS", "ADMD", "ZN"]
-interesting_country_codes = ["CA", "US", "FR"]
+#interesting_country_codes = ["CA", "US", "FR"]
+interesting_country_codes = ["CA", "US"]
 
 db.open (err, db) ->
   # Add US & CAN states / provinces
