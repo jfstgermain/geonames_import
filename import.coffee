@@ -75,4 +75,6 @@ db.open (err, db) ->
                     geoloc:
                       lat: (Number) latitude
                       lon: (Number) longitude
+                      
+                  regions.insert doc
                   

@@ -68,7 +68,7 @@
                     } else {
                       console.log("Couldn't find " + admin1_code_full + " in States");
                     }
-                    return doc = {
+                    doc = {
                       geonameid: geonameid,
                       name: name,
                       country_code: country_code,
@@ -83,6 +83,7 @@
                         lon: Number(longitude)
                       }
                     };
+                    return regions.insert(doc);
                   });
                 });
               }
