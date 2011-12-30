@@ -78,10 +78,7 @@
                       admin2_code: admin2_code,
                       timezone: timezone,
                       state: admin1_code_dbref,
-                      geoloc: {
-                        lat: Number(latitude),
-                        lon: Number(longitude)
-                      }
+                      geoloc: [Number(longitude), Number(latitude)]
                     };
                     return regions.insert(doc);
                   });
