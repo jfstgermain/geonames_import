@@ -2,17 +2,18 @@ csv = require "ya-csv"
 mongodb = require "mongodb"
 #db = new mongodb.Db("geonames", new mongodb.Server "127.0.0.1", 27017, {})
 #db = new mongodb.Db("meatme", new mongodb.Server "127.0.0.1", 27017, {})
-db = new mongodb.Db("meatme", new mongodb.Server "alex.mongohq.com", 10020, {})
-db.authenticate "jfstgermain", "j845680s", ->
-  # include only cities, boroughs & districts
-  interesting_feature_codes = ["PPL", "PPLA", "PPLA2", "PPLC", "PPLL", "PPLS", "ADMD", "ZN"]
-  #interesting_country_codes = ["CA", "US", "FR"]
-  interesting_country_codes = ["CA", "US"]
-
-  db.open (err, db) ->
+mongodb.connect "mongodb://meatme:j845680s@alex.mongohq.com:10020/meatme", (err, db) ->
+  if err? 
+    throw err
+  else
+    # include only cities, boroughs & districts
+    interesting_feature_codes = ["PPL", "PPLA", "PPLA2", "PPLC", "PPLL", "PPLS", "ADMD", "ZN"]
+    #interesting_country_codes = ["CA", "US", "FR"]
+    interesting_country_codes = ["CA", "US"]
     # Add US & CAN states / provinces
     #db.collection "states_dump", (err, states_dump) ->
     db.collection "states", (err, states) ->
+
       reader = csv.createCsvFileReader "./data/admin1CodesASCII.csv", {separator: "\t"}
       console.log "Starting states import"
        
